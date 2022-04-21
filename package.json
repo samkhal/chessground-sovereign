@@ -1,7 +1,7 @@
 {
-  "name": "chessground",
+  "name": "chessground-sovereign",
   "version": "8.2.1",
-  "description": "lichess.org chess ui",
+  "description": "chessground adapted to Sovereign Chess",
   "type": "module",
   "module": "chessground.js",
   "typings": "chessground.d.ts",
@@ -33,19 +33,14 @@
     "/src/*.ts",
     "!/rollup.config.js"
   ],
-  "repository": "https://github.com/lichess-org/chessground",
+  "repository": "https://github.com/samkhal/chessground-sovereign",
   "keywords": [
     "chess",
-    "lichess",
-    "lichess.org",
     "chessboard",
     "ui",
-    "typescript"
+    "typescript",
+    "sovereign"
   ],
-  "author": "Thibault Duplessis (https://github.com/ornicar)",
-  "license": "GPL-3.0-or-later",
-  "bugs": {
-    "url": "https://github.com/lichess-org/chessground/issues"
-  },
-  "funding": "https://lichess.org/patron"
+  "author": "samkhal",
+  "license": "GPL-3.0-or-later"
 }
