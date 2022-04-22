@@ -39,9 +39,10 @@ export function renderWrap(element: HTMLElement, s: HeadlessState): Elements {
   let autoPieces: HTMLElement | undefined;
 
   if (s.drawable.visible) {
+    // used for brushes/annotations
     svg = setAttributes(createSVG('svg'), {
       class: 'cg-shapes',
-      viewBox: '-4 -4 8 8',
+      viewBox: '-8 -8 16 16',
       preserveAspectRatio: 'xMidYMid slice',
     });
     svg.appendChild(createSVG('defs'));

@@ -1,5 +1,5 @@
 import { HeadlessState } from './state.js';
-import { pos2key, key2pos, opposite, distanceSq, allPos, computeSquareCenter } from './util.js';
+import { pos2key, key2pos, opposite, distanceSq, allPos, computeSquareCenter, boardSize} from './util.js';
 import { premove, queen, knight } from './premove.js';
 import * as cg from './types.js';
 
@@ -65,13 +65,14 @@ export function unsetPredrop(state: HeadlessState): void {
 }
 
 function tryAutoCastle(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean {
+  // TODO(samkhal) fix castling logic
   if (!state.autoCastle) return false;
 
   const king = state.pieces.get(orig);
   if (!king || king.role !== 'king') return false;
 
   const origPos = key2pos(orig);
-  const destPos = key2pos(dest);
+  const destPos = key2pos(dest); 
   if ((origPos[1] !== 0 && origPos[1] !== 7) || origPos[1] !== destPos[1]) return false;
   if (origPos[0] === 4 && !state.pieces.has(dest)) {
     if (destPos[0] === 6) dest = pos2key([7, destPos[1]]);
@@ -254,7 +255,7 @@ function canPredrop(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean {
     !!piece &&
     (!destPiece || destPiece.color !== state.movable.color) &&
     state.predroppable.enabled &&
-    (piece.role !== 'pawn' || (dest[1] !== '1' && dest[1] !== '8')) &&
+    (piece.role !== 'pawn' || (dest[1] !== '1' && dest[1] !== '8')) && // TODO(samkhal) look into this
     state.movable.color === piece.color &&
     state.turnColor !== piece.color
   );
@@ -322,11 +323,11 @@ export function stop(state: HeadlessState): void {
 }
 
 export function getKeyAtDomPos(pos: cg.NumberPair, asWhite: boolean, bounds: ClientRect): cg.Key | undefined {
-  let file = Math.floor((8 * (pos[0] - bounds.left)) / bounds.width);
-  if (!asWhite) file = 7 - file;
-  let rank = 7 - Math.floor((8 * (pos[1] - bounds.top)) / bounds.height);
-  if (!asWhite) rank = 7 - rank;
-  return file >= 0 && file < 8 && rank >= 0 && rank < 8 ? pos2key([file, rank]) : undefined;
+  let file = Math.floor((boardSize * (pos[0] - bounds.left)) / bounds.width);
+  if (!asWhite) file = boardSize - 1 - file;
+  let rank = boardSize - 1 - Math.floor((boardSize * (pos[1] - bounds.top)) / bounds.height);
+  if (!asWhite) rank = boardSize - 1 - rank;
+  return file >= 0 && file < boardSize && rank >= 0 && rank < boardSize ? pos2key([file, rank]) : undefined;
 }
 
 export function getSnappedKeyAtDomPos(

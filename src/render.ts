@@ -1,5 +1,5 @@
 import { State } from './state.js';
-import { key2pos, createEl, posToTranslate as posToTranslateFromBounds, translate } from './util.js';
+import { key2pos, createEl, posToTranslate as posToTranslateFromBounds, translate, boardSize } from './util.js';
 import { whitePov } from './board.js';
 import { AnimCurrent, AnimVectors, AnimVector, AnimFadings } from './anim.js';
 import { DragCurrent } from './drag.js';
@@ -186,7 +186,7 @@ export function updateBounds(s: State): void {
   const bounds = s.dom.elements.wrap.getBoundingClientRect();
   const container = s.dom.elements.container;
   const ratio = bounds.height / bounds.width;
-  const width = (Math.floor((bounds.width * window.devicePixelRatio) / 8) * 8) / window.devicePixelRatio;
+  const width = (Math.floor((bounds.width * window.devicePixelRatio) / 8 ) * 8 ) / window.devicePixelRatio; //TODO(samkhal) don't care for now
   const height = width * ratio;
   container.style.width = width + 'px';
   container.style.height = height + 'px';
@@ -212,7 +212,7 @@ function removeNodes(s: State, nodes: HTMLElement[]): void {
 function posZIndex(pos: cg.Pos, asWhite: boolean): string {
   const minZ = 3;
   const rank = pos[1];
-  const z = asWhite ? minZ + 7 - rank : minZ + rank;
+  const z = asWhite ? minZ + boardSize - 1 - rank : minZ + rank;
 
   return `${z}`;
 }

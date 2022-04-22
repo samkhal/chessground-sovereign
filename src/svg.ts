@@ -1,5 +1,5 @@
 import { State } from './state.js';
-import { key2pos } from './util.js';
+import { key2pos, boardSize } from './util.js';
 import { Drawable, DrawShape, DrawShapePiece, DrawBrush, DrawBrushes, DrawModifiers } from './draw.js';
 import { SyncableShape, Hash, syncShapes } from './sync.js';
 import * as cg from './types.js';
@@ -250,7 +250,7 @@ export function setAttributes(el: SVGElement, attrs: { [key: string]: any }): SV
 }
 
 function orient(pos: cg.Pos, color: cg.Color): cg.Pos {
-  return color === 'white' ? pos : [7 - pos[0], 7 - pos[1]];
+  return color === 'white' ? pos : [boardSize - 1 - pos[0], boardSize - 1 - pos[1]];
 }
 
 function makeCustomBrush(base: DrawBrush, modifiers: DrawModifiers): DrawBrush {

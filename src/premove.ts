@@ -39,13 +39,13 @@ function king(color: cg.Color, rookFiles: number[], canCastle: boolean): Mobilit
     (diff(x1, x2) < 2 && diff(y1, y2) < 2) ||
     (canCastle &&
       y1 === y2 &&
-      y1 === (color === 'white' ? 0 : 7) &&
+      y1 === (color === 'white' ? 0 : 7) && //TODO(samkhal) premove castle
       ((x1 === 4 && ((x2 === 2 && rookFiles.includes(0)) || (x2 === 6 && rookFiles.includes(7)))) ||
         rookFiles.includes(x2)));
 }
 
 function rookFilesOf(pieces: cg.Pieces, color: cg.Color) {
-  const backrank = color === 'white' ? '1' : '8';
+  const backrank = color === 'white' ? '1' : '8'; //TODO(samkhal) premove castle
   const files = [];
   for (const [key, piece] of pieces) {
     if (key[1] === backrank && piece.color === color && piece.role === 'rook') {

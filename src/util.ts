@@ -1,10 +1,12 @@
 import * as cg from './types.js';
 
+export const boardSize: number = 16;
+
 export const invRanks: readonly cg.Rank[] = [...cg.ranks].reverse();
 
 export const allKeys: readonly cg.Key[] = Array.prototype.concat(...cg.files.map(c => cg.ranks.map(r => c + r)));
 
-export const pos2key = (pos: cg.Pos): cg.Key => allKeys[8 * pos[0] + pos[1]];
+export const pos2key = (pos: cg.Pos): cg.Key => allKeys[boardSize * pos[0] + pos[1]];
 
 export const key2pos = (k: cg.Key): cg.Pos => [k.charCodeAt(0) - 97, k.charCodeAt(1) - 49];
 
@@ -53,7 +55,7 @@ export const samePiece = (p1: cg.Piece, p2: cg.Piece): boolean => p1.role === p2
 export const posToTranslate =
   (bounds: ClientRect): ((pos: cg.Pos, asWhite: boolean) => cg.NumberPair) =>
   (pos, asWhite) =>
-    [((asWhite ? pos[0] : 7 - pos[0]) * bounds.width) / 8, ((asWhite ? 7 - pos[1] : pos[1]) * bounds.height) / 8];
+    [((asWhite ? pos[0] : boardSize - 1 - pos[0]) * bounds.width) / boardSize, ((asWhite ? boardSize - 1 - pos[1] : pos[1]) * bounds.height) / boardSize];
 
 export const translate = (el: HTMLElement, pos: cg.NumberPair): void => {
   el.style.transform = `translate(${pos[0]}px,${pos[1]}px)`;
@@ -84,11 +86,11 @@ export const createEl = (tagName: string, className?: string): HTMLElement => {
 export function computeSquareCenter(key: cg.Key, asWhite: boolean, bounds: ClientRect): cg.NumberPair {
   const pos = key2pos(key);
   if (!asWhite) {
-    pos[0] = 7 - pos[0];
-    pos[1] = 7 - pos[1];
+    pos[0] = boardSize - 1 - pos[0];
+    pos[1] = boardSize - 1 - pos[1];
   }
   return [
-    bounds.left + (bounds.width * pos[0]) / 8 + bounds.width / 16,
-    bounds.top + (bounds.height * (7 - pos[1])) / 8 + bounds.height / 16,
+    bounds.left + (bounds.width * pos[0]) / boardSize + bounds.width / (boardSize * 2),
+    bounds.top + (bounds.height * (boardSize - 1 - pos[1])) / boardSize + bounds.height / (boardSize * 2),
   ];
 }
