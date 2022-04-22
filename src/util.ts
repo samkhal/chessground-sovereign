@@ -8,7 +8,8 @@ export const allKeys: readonly cg.Key[] = Array.prototype.concat(...cg.files.map
 
 export const pos2key = (pos: cg.Pos): cg.Key => allKeys[boardSize * pos[0] + pos[1]];
 
-export const key2pos = (k: cg.Key): cg.Pos => [k.charCodeAt(0) - 97, k.charCodeAt(1) - 49];
+// handle ranks 0-9 and A-G
+export const key2pos = (k: cg.Key): cg.Pos => [k.charCodeAt(0) - 97, k.charCodeAt(1) < 58 ? k.charCodeAt(1) - 49 : k.charCodeAt(1) - 65 + 9];
 
 export const allPos: readonly cg.Pos[] = allKeys.map(key2pos);
 
