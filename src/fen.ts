@@ -1,7 +1,24 @@
 import { pos2key, invRanks } from './util.js';
 import * as cg from './types.js';
 
-export const initial: cg.FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
+/* Modifications to BNF grammar of FEN for sovereign chess:
+
+<FEN> ::=  <Piece Placement>
+       ' ' <Side to move>
+       ' ' <Castling ability>
+
+<Piece Placement> ::= (same as FEN, with 8 ranks, and numbers 1-16)
+
+<piece>   ::= <color><role>
+<role>    ::= 'p' | 'n' | 'b' | 'r' | 'q' | 'k'
+<color>   ::= 'w' | 'b' | 's' | 'a' | 'p' | 'r' | 'o' | 'y' | 'g' | 'c' | 'n' | 'v'
+<Side to move> ::= <color>
+
+<Castling ability> ::= TODO(samkhal)
+
+*/
+
+export const initial: cg.FEN = '4rnbqkbnr4/4pppppppp4/16/16/16/16/16/16/16/16/16/16/16/16/4PPPPPPPP4/4RNBQKBNR4';
 
 const roles: { [letter: string]: cg.Role } = {
   p: 'pawn',
@@ -24,8 +41,9 @@ const letters = {
 export function read(fen: cg.FEN): cg.Pieces {
   if (fen === 'start') fen = initial;
   const pieces: cg.Pieces = new Map();
-  let row = 7,
+  let row = 15,
     col = 0;
+  let skip_accumulator = 0;
   for (const c of fen) {
     switch (c) {
       case ' ':
@@ -35,6 +53,7 @@ export function read(fen: cg.FEN): cg.Pieces {
         --row;
         if (row < 0) return pieces;
         col = 0;
+        skip_accumulator = 0;
         break;
       case '~': {
         const piece = pieces.get(pos2key([col - 1, row]));
@@ -43,8 +62,14 @@ export function read(fen: cg.FEN): cg.Pieces {
       }
       default: {
         const nb = c.charCodeAt(0);
-        if (nb < 57) col += nb - 48;
-        else {
+        if (nb < 58) {
+          // digit
+          skip_accumulator *= 10;
+          skip_accumulator += nb - 48;
+        } else {
+          col += skip_accumulator;
+          skip_accumulator = 0;
+
           const role = c.toLowerCase();
           pieces.set(pos2key([col, row]), {
             role: roles[role],
