@@ -43,7 +43,7 @@ export const timer = (): cg.Timer => {
   };
 };
 
-export const opposite = (c: cg.Color): cg.Color => (c === 'white' ? 'black' : 'white');
+export const opposite = (s: cg.Side): cg.Side => (s === cg.Side.White ? cg.Side.Black : cg.Side.White);
 
 export const distanceSq = (pos1: cg.Pos, pos2: cg.Pos): number => {
   const dx = pos1[0] - pos2[0],
@@ -55,8 +55,8 @@ export const samePiece = (p1: cg.Piece, p2: cg.Piece): boolean => p1.role === p2
 
 export const posToTranslate =
   (bounds: ClientRect): ((pos: cg.Pos, asWhite: boolean) => cg.NumberPair) =>
-  (pos, asWhite) =>
-    [((asWhite ? pos[0] : boardSize - 1 - pos[0]) * bounds.width) / boardSize, ((asWhite ? boardSize - 1 - pos[1] : pos[1]) * bounds.height) / boardSize];
+    (pos, asWhite) =>
+      [((asWhite ? pos[0] : boardSize - 1 - pos[0]) * bounds.width) / boardSize, ((asWhite ? boardSize - 1 - pos[1] : pos[1]) * bounds.height) / boardSize];
 
 export const translate = (el: HTMLElement, pos: cg.NumberPair): void => {
   el.style.transform = `translate(${pos[0]}px,${pos[1]}px)`;

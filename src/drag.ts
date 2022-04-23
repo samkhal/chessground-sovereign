@@ -28,7 +28,7 @@ export function start(s: State, e: cg.MouchEvent): void {
   if (!orig) return;
   const piece = s.pieces.get(orig);
   const previouslySelected = s.selected;
-  if (!previouslySelected && s.drawable.enabled && (s.drawable.eraseOnClick || !piece || piece.color !== s.turnColor))
+  if (!previouslySelected && s.drawable.enabled && (s.drawable.eraseOnClick || !piece || !board.activePlayerControlsColor(s, piece.color)))
     drawClear(s);
   // Prevent touch scroll and create no corresponding mouse event, if there
   // is an intent to interact with the board.
@@ -134,7 +134,7 @@ function processDrag(s: State): void {
         const bounds = s.dom.bounds();
         util.translate(cur.element, [
           cur.pos[0] - bounds.left - bounds.width / (util.boardSize * 2),
-          cur.pos[1] - bounds.top - bounds.height / (util.boardSize* 2),
+          cur.pos[1] - bounds.top - bounds.height / (util.boardSize * 2),
         ]);
 
         cur.keyHasChanged ||= cur.orig !== board.getKeyAtDomPos(cur.pos, board.whitePov(s), bounds);

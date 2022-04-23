@@ -6,8 +6,8 @@ import * as cg from './types.js';
 
 export interface Config {
   fen?: cg.FEN; // chess position in Forsyth notation
-  orientation?: cg.Color; // board orientation. white | black
-  turnColor?: cg.Color; // turn to play. white | black
+  orientation?: cg.Side; // board orientation.
+  turnColor?: cg.Side; // turn to play.
   check?: cg.Color | boolean; // true for current color, false to unset
   lastMove?: cg.Key[]; // squares part of the last move ["c3", "c4"]
   selected?: cg.Key; // square currently selected "a1"
@@ -29,7 +29,7 @@ export interface Config {
   };
   movable?: {
     free?: boolean; // all moves are valid - board editor
-    color?: cg.Color | 'both'; // color that can move. white | black | both | undefined
+    color?: cg.Side | 'both'; // color that can move. white | black | both | undefined
     dests?: cg.Dests; // valid moves. {"a2" ["a3" "a4"] "b1" ["a3" "c3"]}
     showDests?: boolean; // whether to add the move-dest class on squares
     events?: {
@@ -124,7 +124,7 @@ export function configure(state: HeadlessState, config: Config): void {
   applyAnimation(state, config);
 
   if (!state.movable.rookCastle && state.movable.dests) {
-    const rank = state.movable.color === 'white' ? '1' : '8', //TODO(samkhal) castling
+    const rank = state.movable.color === cg.Side.White ? '1' : '8', //TODO(samkhal) castling
       kingStartPos = ('e' + rank) as cg.Key,
       dests = state.movable.dests.get(kingStartPos),
       king = state.pieces.get(kingStartPos);

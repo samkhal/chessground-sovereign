@@ -1,6 +1,6 @@
 import { HeadlessState } from './state.js';
 import { setVisible, createEl } from './util.js';
-import { colors, files, ranks, Elements } from './types.js';
+import { Side, files, ranks, Elements } from './types.js';
 import { createElement as createSVG, setAttributes } from './svg.js';
 
 export function renderWrap(element: HTMLElement, s: HeadlessState): Elements {
@@ -25,7 +25,7 @@ export function renderWrap(element: HTMLElement, s: HeadlessState): Elements {
   // for a slight performance improvement! (avoids recomputing style)
   element.classList.add('cg-wrap');
 
-  for (const c of colors) element.classList.toggle('orientation-' + c, s.orientation === c);
+  for (const side in Side) element.classList.toggle('orientation-' + side.toLowerCase(), s.orientation === Side[side as keyof typeof Side]);
   element.classList.toggle('manipulable', !s.viewOnly);
 
   const container = createEl('cg-container');
@@ -63,7 +63,7 @@ export function renderWrap(element: HTMLElement, s: HeadlessState): Elements {
   }
 
   if (s.coordinates) {
-    const orientClass = s.orientation === 'black' ? ' black' : '';
+    const orientClass = s.orientation === Side.Black ? ' black' : '';
     const ranksPositionClass = s.ranksPosition === 'left' ? ' left' : '';
     container.appendChild(renderCoords(ranks, 'ranks' + orientClass + ranksPositionClass));
     container.appendChild(renderCoords(files, 'files' + orientClass));

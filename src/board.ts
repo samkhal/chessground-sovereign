@@ -25,9 +25,14 @@ export function setPieces(state: HeadlessState, pieces: cg.PiecesDiff): void {
   }
 }
 
+function getSideColor(side: cg.Side): cg.Color {
+  // TODO(color) associate players with colors
+  return side === cg.Side.White ? cg.Color.White : cg.Color.Black;
+}
+
 export function setCheck(state: HeadlessState, color: cg.Color | boolean): void {
   state.check = undefined;
-  if (color === true) color = state.turnColor;
+  if (color === true) color = getSideColor(state.turnColor);
   if (color)
     for (const [k, p] of state.pieces) {
       if (p.role === 'king' && p.color === color) {
@@ -211,11 +216,22 @@ export function unselect(state: HeadlessState): void {
   state.hold.cancel();
 }
 
+// Return true if player controls this color
+export function playerControlsColor(_state: HeadlessState, player: cg.Side, color: cg.Color) {
+  //TODO(color) map players to colors
+  return color === getSideColor(player);
+}
+
+// Return true if active player controls this color
+export function activePlayerControlsColor(state: HeadlessState, color: cg.Color) {
+  return playerControlsColor(state, state.turnColor, color);
+}
+
 function isMovable(state: HeadlessState, orig: cg.Key): boolean {
   const piece = state.pieces.get(orig);
   return (
     !!piece &&
-    (state.movable.color === 'both' || (state.movable.color === piece.color && state.turnColor === piece.color))
+    (state.movable.color === 'both' || (state.movable.color === state.turnColor && activePlayerControlsColor(state, piece.color)))
   );
 }
 
@@ -230,7 +246,7 @@ function canDrop(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean {
   return (
     !!piece &&
     (orig === dest || !state.pieces.has(dest)) &&
-    (state.movable.color === 'both' || (state.movable.color === piece.color && state.turnColor === piece.color))
+    (state.movable.color === 'both' || (state.movable.color === state.turnColor && activePlayerControlsColor(state, piece.color)))
   );
 }
 
@@ -243,17 +259,8 @@ function canPremove(_state: HeadlessState, _orig: cg.Key, _dest: cg.Key): boolea
   return false;
 }
 
-function canPredrop(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean {
-  const piece = state.pieces.get(orig);
-  const destPiece = state.pieces.get(dest);
-  return (
-    !!piece &&
-    (!destPiece || destPiece.color !== state.movable.color) &&
-    state.predroppable.enabled &&
-    (piece.role !== 'pawn' || (dest[1] !== '1' && dest[1] !== '8')) && // TODO(samkhal) look into this
-    state.movable.color === piece.color &&
-    state.turnColor !== piece.color
-  );
+function canPredrop(_state: HeadlessState, _orig: cg.Key, _dest: cg.Key): boolean {
+  return false;
 }
 
 export function isDraggable(state: HeadlessState, orig: cg.Key): boolean {
@@ -262,7 +269,9 @@ export function isDraggable(state: HeadlessState, orig: cg.Key): boolean {
     !!piece &&
     state.draggable.enabled &&
     (state.movable.color === 'both' ||
-      (state.movable.color === piece.color && (state.turnColor === piece.color || state.premovable.enabled)))
+      (state.movable.color !== undefined &&
+        playerControlsColor(state, state.movable.color, piece.color) &&
+        (activePlayerControlsColor(state, piece.color) || state.premovable.enabled)))
   );
 }
 
@@ -285,25 +294,8 @@ export function playPremove(state: HeadlessState): boolean {
   return success;
 }
 
-export function playPredrop(state: HeadlessState, validate: (drop: cg.Drop) => boolean): boolean {
-  const drop = state.predroppable.current;
-  let success = false;
-  if (!drop) return false;
-  if (validate(drop)) {
-    const piece = {
-      role: drop.role,
-      color: state.movable.color,
-    } as cg.Piece;
-    if (baseNewPiece(state, piece, drop.key)) {
-      callUserFunction(state.movable.events.afterNewPiece, drop.role, drop.key, {
-        premove: false,
-        predrop: true,
-      });
-      success = true;
-    }
-  }
-  unsetPredrop(state);
-  return success;
+export function playPredrop(_state: HeadlessState, _validate: (drop: cg.Drop) => boolean): boolean {
+  throw "playPredrop unimplemented";
 }
 
 export function cancelMove(state: HeadlessState): void {
@@ -326,5 +318,5 @@ export function getKeyAtDomPos(pos: cg.NumberPair, asWhite: boolean, bounds: Cli
 }
 
 export function whitePov(s: HeadlessState): boolean {
-  return s.orientation === 'white';
+  return s.orientation === cg.Side.White;
 }

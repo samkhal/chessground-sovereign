@@ -1,4 +1,12 @@
-export type Color = typeof colors[number];
+// export enum Player { Player1, Player2 }; // TODO(player) Implement Side vs. Player distinction
+export enum Side {
+  White = "white",
+  Black = "black",
+};
+export enum Color {
+  White = "white",
+  Black = "black"
+};
 export type Role = 'king' | 'queen' | 'rook' | 'bishop' | 'knight' | 'pawn';
 export type File = typeof files[number];
 export type Rank = typeof ranks[number];
@@ -98,7 +106,6 @@ export type Unbind = () => void;
 export type Milliseconds = number;
 export type KHz = number;
 
-export const colors = ['white', 'black'] as const;
 export const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p'] as const;
 export const ranks = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G'] as const;
 

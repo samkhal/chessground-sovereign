@@ -73,7 +73,7 @@ export function read(fen: cg.FEN): cg.Pieces {
           const role = c.toLowerCase();
           pieces.set(pos2key([col, row]), {
             role: roles[role],
-            color: c === role ? 'black' : 'white',
+            color: c === role ? cg.Color.Black : cg.Color.White,
           });
           ++col;
         }
@@ -91,7 +91,7 @@ export function write(pieces: cg.Pieces): cg.FEN {
           const piece = pieces.get((x + y) as cg.Key);
           if (piece) {
             let p = letters[piece.role];
-            if (piece.color === 'white') p = p.toUpperCase();
+            if (piece.color === cg.Color.White) p = p.toUpperCase();
             if (piece.promoted) p += '~';
             return p;
           } else return '1';

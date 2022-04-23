@@ -7,8 +7,8 @@ import * as cg from './types.js';
 
 export interface HeadlessState {
   pieces: cg.Pieces;
-  orientation: cg.Color; // board orientation. white | black
-  turnColor: cg.Color; // turn to play. white | black
+  orientation: cg.Side; // board orientation. 
+  turnColor: cg.Side; // player to play. 
   check?: cg.Key; // square currently in check "a2"
   lastMove?: cg.Key[]; // squares part of the last move ["c3"; "c4"]
   selected?: cg.Key; // square currently selected "a1"
@@ -32,7 +32,7 @@ export interface HeadlessState {
   };
   movable: {
     free: boolean; // all moves are valid - board editor
-    color?: cg.Color | 'both'; // color that can move. white | black | both
+    color?: cg.Side | 'both'; // color that can move. white | black | both
     dests?: cg.Dests; // valid moves. {"a2" ["a3" "a4"] "b1" ["a3" "c3"]}
     showDests: boolean; // whether to add the move-dest class on squares
     events: {
@@ -107,8 +107,8 @@ export interface State extends HeadlessState {
 export function defaults(): HeadlessState {
   return {
     pieces: fen.read(fen.initial),
-    orientation: 'white',
-    turnColor: 'white',
+    orientation: cg.Side.White,
+    turnColor: cg.Side.White,
     coordinates: true,
     ranksPosition: 'right',
     autoCastle: true,

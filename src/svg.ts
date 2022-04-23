@@ -249,8 +249,8 @@ export function setAttributes(el: SVGElement, attrs: { [key: string]: any }): SV
   return el;
 }
 
-function orient(pos: cg.Pos, color: cg.Color): cg.Pos {
-  return color === 'white' ? pos : [boardSize - 1 - pos[0], boardSize - 1 - pos[1]];
+function orient(pos: cg.Pos, side: cg.Side): cg.Pos {
+  return side === cg.Side.White ? pos : [boardSize - 1 - pos[0], boardSize - 1 - pos[1]];
 }
 
 function makeCustomBrush(base: DrawBrush, modifiers: DrawModifiers): DrawBrush {
