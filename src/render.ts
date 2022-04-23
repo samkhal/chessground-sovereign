@@ -3,6 +3,7 @@ import { key2pos, createEl, posToTranslate as posToTranslateFromBounds, translat
 import { whitePov } from './board.js';
 import { AnimCurrent, AnimVectors, AnimVector, AnimFadings } from './anim.js';
 import { DragCurrent } from './drag.js';
+import { createElement as createSVG, setAttributes } from './svg.js';
 import * as cg from './types.js';
 
 type PieceName = string; // `$color $role`
@@ -149,6 +150,16 @@ export function render(s: State): void {
           pieceNode = createEl('piece', pieceName) as cg.PieceNode,
           pos = key2pos(k);
 
+        const useSVG = createSVG('use');
+        useSVG.setAttribute("class", pieceName);
+        useSVG.setAttributeNS("http://www.w3.org/1999/xlink", "href", `#${p.role}-svg`);
+
+        const pieceSVG = setAttributes(createSVG('svg'), {
+          viewBox: '0 0 50 50',
+        });
+        pieceSVG.appendChild(useSVG);
+        pieceNode.appendChild(pieceSVG);
+
         pieceNode.cgPiece = pieceName;
         pieceNode.cgKey = k;
         if (anim) {
@@ -186,7 +197,7 @@ export function updateBounds(s: State): void {
   const bounds = s.dom.elements.wrap.getBoundingClientRect();
   const container = s.dom.elements.container;
   const ratio = bounds.height / bounds.width;
-  const width = (Math.floor((bounds.width * window.devicePixelRatio) / 8 ) * 8 ) / window.devicePixelRatio; //TODO(samkhal) don't care for now
+  const width = (Math.floor((bounds.width * window.devicePixelRatio) / 8) * 8) / window.devicePixelRatio; //TODO(samkhal) don't care for now
   const height = width * ratio;
   container.style.width = width + 'px';
   container.style.height = height + 'px';

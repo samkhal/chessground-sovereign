@@ -18,7 +18,7 @@ import * as cg from './types.js';
 
 */
 
-export const initial: cg.FEN = '4brbnbbbqbkbbbnbr4/4bpbpbpbpbpbpbpbp4/16/16/16/16/16/16/16/16/16/16/16/16/4wpwpwpwpwpwpwpwp4/4wrwnwbwqwkwbwnwr4';
+export const initial: cg.FEN = 'aqabvrvnbrbnbbbqbkbbbnbrynyrsbsq/aranvpvpbpbpbpbpbpbpbpbpypypsnsr/nbnp12opob/nqnp12opoq/crcp12rprr/cncp12rprn/gbgp12pppb/gqgp12pppq/yqyp12vpvq/ybyp12vpvb/onop12npnn/orop12npnr/rqrp12cpcq/rbrp12cpcb/srsnppppwpwpwpwpwpwpwpwpgpgpanar/sqsbprpnwrwnwbwqwkwbwnwrgngrabaq';
 
 const roles: { [letter: string]: cg.Role } = {
   p: 'pawn',
@@ -38,9 +38,20 @@ const letters = {
   king: 'k',
 };
 
+
 const colors: { [letter: string]: cg.Color } = {
   'w': cg.Color.White,
   'b': cg.Color.Black,
+  'a': cg.Color.Ash,
+  's': cg.Color.Slate,
+  'p': cg.Color.Pink,
+  'r': cg.Color.Red,
+  'o': cg.Color.Orange,
+  'y': cg.Color.Yellow,
+  'g': cg.Color.Green,
+  'c': cg.Color.Cyan,
+  'n': cg.Color.Navy,
+  'v': cg.Color.Violet,
 };
 
 export function read(fen: cg.FEN): cg.Pieces {

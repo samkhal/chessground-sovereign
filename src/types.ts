@@ -5,7 +5,17 @@ export enum Side {
 };
 export enum Color {
   White = "white",
-  Black = "black"
+  Black = "black",
+  Ash = "ash",
+  Slate = "slate",
+  Pink = "pink",
+  Red = "red",
+  Orange = "orange",
+  Yellow = "yellow",
+  Green = "green",
+  Cyan = "cyan",
+  Navy = "navy",
+  Violet = "violet",
 };
 export type Role = 'king' | 'queen' | 'rook' | 'bishop' | 'knight' | 'pawn';
 export type File = typeof files[number];
