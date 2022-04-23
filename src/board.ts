@@ -32,7 +32,7 @@ function getSideColor(side: cg.Side): cg.Color {
 
 export function setCheck(state: HeadlessState, color: cg.Color | boolean): void {
   state.check = undefined;
-  if (color === true) color = getSideColor(state.turnColor);
+  if (color === true) color = getSideColor(state.turnPlayer);
   if (color)
     for (const [k, p] of state.pieces) {
       if (p.role === 'king' && p.color === color) {
@@ -126,7 +126,7 @@ export function baseNewPiece(state: HeadlessState, piece: cg.Piece, key: cg.Key,
   state.check = undefined;
   callUserFunction(state.events.change);
   state.movable.dests = undefined;
-  state.turnColor = opposite(state.turnColor);
+  state.turnPlayer = opposite(state.turnPlayer);
   return true;
 }
 
@@ -134,7 +134,7 @@ function baseUserMove(state: HeadlessState, orig: cg.Key, dest: cg.Key): cg.Piec
   const result = baseMove(state, orig, dest);
   if (result) {
     state.movable.dests = undefined;
-    state.turnColor = opposite(state.turnColor);
+    state.turnPlayer = opposite(state.turnPlayer);
     state.animation.current = undefined;
   }
   return result;
@@ -224,14 +224,14 @@ export function playerControlsColor(_state: HeadlessState, player: cg.Side, colo
 
 // Return true if active player controls this color
 export function activePlayerControlsColor(state: HeadlessState, color: cg.Color) {
-  return playerControlsColor(state, state.turnColor, color);
+  return playerControlsColor(state, state.turnPlayer, color);
 }
 
 function isMovable(state: HeadlessState, orig: cg.Key): boolean {
   const piece = state.pieces.get(orig);
   return (
     !!piece &&
-    (state.movable.color === 'both' || (state.movable.color === state.turnColor && activePlayerControlsColor(state, piece.color)))
+    (state.movable.color === 'both' || (state.movable.color === state.turnPlayer && activePlayerControlsColor(state, piece.color)))
   );
 }
 
@@ -246,7 +246,7 @@ function canDrop(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean {
   return (
     !!piece &&
     (orig === dest || !state.pieces.has(dest)) &&
-    (state.movable.color === 'both' || (state.movable.color === state.turnColor && activePlayerControlsColor(state, piece.color)))
+    (state.movable.color === 'both' || (state.movable.color === state.turnPlayer && activePlayerControlsColor(state, piece.color)))
   );
 }
 

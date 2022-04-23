@@ -7,7 +7,7 @@ import * as cg from './types.js';
 export interface Config {
   fen?: cg.FEN; // chess position in Forsyth notation
   orientation?: cg.Side; // board orientation.
-  turnColor?: cg.Side; // turn to play.
+  turnPlayer?: cg.Side; // turn to play.
   check?: cg.Color | boolean; // true for current color, false to unset
   lastMove?: cg.Key[]; // squares part of the last move ["c3", "c4"]
   selected?: cg.Key; // square currently selected "a1"

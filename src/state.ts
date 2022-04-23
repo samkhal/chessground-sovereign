@@ -8,7 +8,7 @@ import * as cg from './types.js';
 export interface HeadlessState {
   pieces: cg.Pieces;
   orientation: cg.Side; // board orientation. 
-  turnColor: cg.Side; // player to play. 
+  turnPlayer: cg.Side; // player to play. 
   check?: cg.Key; // square currently in check "a2"
   lastMove?: cg.Key[]; // squares part of the last move ["c3"; "c4"]
   selected?: cg.Key; // square currently selected "a1"
@@ -108,7 +108,7 @@ export function defaults(): HeadlessState {
   return {
     pieces: fen.read(fen.initial),
     orientation: cg.Side.White,
-    turnColor: cg.Side.White,
+    turnPlayer: cg.Side.White,
     coordinates: true,
     ranksPosition: 'right',
     autoCastle: true,
