@@ -1,6 +1,5 @@
 import { HeadlessState } from './state.js';
-import { pos2key, key2pos, opposite, distanceSq, allPos, computeSquareCenter, boardSize} from './util.js';
-import { premove, queen, knight } from './premove.js';
+import { pos2key, key2pos, opposite, boardSize } from './util.js';
 import * as cg from './types.js';
 
 export function callUserFunction<T extends (...args: any[]) => void>(f: T | undefined, ...args: Parameters<T>): void {
@@ -72,7 +71,7 @@ function tryAutoCastle(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolea
   if (!king || king.role !== 'king') return false;
 
   const origPos = key2pos(orig);
-  const destPos = key2pos(dest); 
+  const destPos = key2pos(dest);
   if ((origPos[1] !== 0 && origPos[1] !== 7) || origPos[1] !== destPos[1]) return false;
   if (origPos[0] === 4 && !state.pieces.has(dest)) {
     if (destPos[0] === 6) dest = pos2key([7, destPos[1]]);
@@ -203,9 +202,7 @@ export function selectSquare(state: HeadlessState, key: cg.Key, force?: boolean)
 
 export function setSelected(state: HeadlessState, key: cg.Key): void {
   state.selected = key;
-  if (isPremovable(state, key)) {
-    state.premovable.dests = premove(state.pieces, key, state.premovable.castle);
-  } else state.premovable.dests = undefined;
+  state.premovable.dests = undefined;
 }
 
 export function unselect(state: HeadlessState): void {
@@ -237,15 +234,13 @@ function canDrop(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean {
   );
 }
 
-function isPremovable(state: HeadlessState, orig: cg.Key): boolean {
-  const piece = state.pieces.get(orig);
-  return !!piece && state.premovable.enabled && state.movable.color === piece.color && state.turnColor !== piece.color;
+function isPremovable(_state: HeadlessState, _orig: cg.Key): boolean {
+  // Premoving adds another place to compute mobility/castling, disable it
+  return false;
 }
 
-function canPremove(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean {
-  return (
-    orig !== dest && isPremovable(state, orig) && premove(state.pieces, orig, state.premovable.castle).includes(dest)
-  );
+function canPremove(_state: HeadlessState, _orig: cg.Key, _dest: cg.Key): boolean {
+  return false;
 }
 
 function canPredrop(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean {
@@ -328,25 +323,6 @@ export function getKeyAtDomPos(pos: cg.NumberPair, asWhite: boolean, bounds: Cli
   let rank = boardSize - 1 - Math.floor((boardSize * (pos[1] - bounds.top)) / bounds.height);
   if (!asWhite) rank = boardSize - 1 - rank;
   return file >= 0 && file < boardSize && rank >= 0 && rank < boardSize ? pos2key([file, rank]) : undefined;
-}
-
-export function getSnappedKeyAtDomPos(
-  orig: cg.Key,
-  pos: cg.NumberPair,
-  asWhite: boolean,
-  bounds: ClientRect
-): cg.Key | undefined {
-  const origPos = key2pos(orig);
-  const validSnapPos = allPos.filter(pos2 => {
-    return queen(origPos[0], origPos[1], pos2[0], pos2[1]) || knight(origPos[0], origPos[1], pos2[0], pos2[1]);
-  });
-  const validSnapCenters = validSnapPos.map(pos2 => computeSquareCenter(pos2key(pos2), asWhite, bounds));
-  const validSnapDistances = validSnapCenters.map(pos2 => distanceSq(pos, pos2));
-  const [, closestSnapIndex] = validSnapDistances.reduce(
-    (a, b, index) => (a[0] < b ? a : [b, index]),
-    [validSnapDistances[0], 0]
-  );
-  return pos2key(validSnapPos[closestSnapIndex]);
 }
 
 export function whitePov(s: HeadlessState): boolean {

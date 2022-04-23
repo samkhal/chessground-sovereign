@@ -1,5 +1,5 @@
 import { State } from './state.js';
-import { unselect, cancelMove, getKeyAtDomPos, getSnappedKeyAtDomPos, whitePov } from './board.js';
+import { unselect, cancelMove, getKeyAtDomPos, whitePov } from './board.js';
 import { eventPosition, isRightButton } from './util.js';
 import * as cg from './types.js';
 
@@ -52,7 +52,7 @@ export interface DrawCurrent {
   mouseSq?: cg.Key; // square being moused over
   pos: cg.NumberPair; // relative current position
   brush: string; // brush name for shape
-  snapToValidMove: boolean; // whether to snap to valid piece moves
+  snapToValidMove: boolean; // whether to snap to valid piece moves; not supported for SovereignChess
 }
 
 const brushes = ['green', 'red', 'blue', 'yellow'];
@@ -81,12 +81,9 @@ export function processDraw(state: State): void {
     const cur = state.drawable.current;
     if (cur) {
       const keyAtDomPos = getKeyAtDomPos(cur.pos, whitePov(state), state.dom.bounds());
-      if (!keyAtDomPos) {
-        cur.snapToValidMove = false;
-      }
-      const mouseSq = cur.snapToValidMove
-        ? getSnappedKeyAtDomPos(cur.orig, cur.pos, whitePov(state), state.dom.bounds())
-        : keyAtDomPos;
+      // Snap to valid move not supported in SovereignChess
+
+      const mouseSq = keyAtDomPos;
       if (mouseSq !== cur.mouseSq) {
         cur.mouseSq = mouseSq;
         cur.dest = mouseSq !== cur.orig ? mouseSq : undefined;
