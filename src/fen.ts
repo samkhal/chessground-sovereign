@@ -18,7 +18,7 @@ import * as cg from './types.js';
 
 */
 
-export const initial: cg.FEN = '4rnbqkbnr4/4pppppppp4/16/16/16/16/16/16/16/16/16/16/16/16/4PPPPPPPP4/4RNBQKBNR4';
+export const initial: cg.FEN = '4brbnbbbqbkbbbnbr4/4bpbpbpbpbpbpbpbp4/16/16/16/16/16/16/16/16/16/16/16/16/4wpwpwpwpwpwpwpwp4/4wrwnwbwqwkwbwnwr4';
 
 const roles: { [letter: string]: cg.Role } = {
   p: 'pawn',
@@ -38,12 +38,18 @@ const letters = {
   king: 'k',
 };
 
+const colors: { [letter: string]: cg.Color } = {
+  'w': cg.Color.White,
+  'b': cg.Color.Black,
+};
+
 export function read(fen: cg.FEN): cg.Pieces {
   if (fen === 'start') fen = initial;
   const pieces: cg.Pieces = new Map();
   let row = 15,
     col = 0;
   let skip_accumulator = 0;
+  let last_color = "";
   for (const c of fen) {
     switch (c) {
       case ' ':
@@ -70,12 +76,18 @@ export function read(fen: cg.FEN): cg.Pieces {
           col += skip_accumulator;
           skip_accumulator = 0;
 
-          const role = c.toLowerCase();
-          pieces.set(pos2key([col, row]), {
-            role: roles[role],
-            color: c === role ? cg.Color.Black : cg.Color.White,
-          });
-          ++col;
+          if (last_color) {
+            const role = c.toLowerCase();
+            pieces.set(pos2key([col, row]), {
+              role: roles[role],
+              color: colors[last_color],
+            });
+            ++col;
+            last_color = "";
+          }
+          else {
+            last_color = c;
+          }
         }
       }
     }
@@ -90,8 +102,7 @@ export function write(pieces: cg.Pieces): cg.FEN {
         .map(x => {
           const piece = pieces.get((x + y) as cg.Key);
           if (piece) {
-            let p = letters[piece.role];
-            if (piece.color === cg.Color.White) p = p.toUpperCase();
+            let p = piece.color.slice(0, 1) + letters[piece.role];
             if (piece.promoted) p += '~';
             return p;
           } else return '1';
