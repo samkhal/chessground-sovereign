@@ -1,6 +1,7 @@
 import { HeadlessState } from './state.js';
 import { pos2key, key2pos, opposite, boardSize } from './util.js';
 import * as cg from './types.js';
+import { write as writeFen } from './fen.js';
 
 export function callUserFunction<T extends (...args: any[]) => void>(f: T | undefined, ...args: Parameters<T>): void {
   if (f) setTimeout(() => f(...args), 1);
@@ -152,7 +153,7 @@ export function userMove(state: HeadlessState, orig: cg.Key, dest: cg.Key): bool
         holdTime,
       };
       if (result !== true) metadata.captured = result;
-      callUserFunction(state.movable.events.after, orig, dest, metadata);
+      callUserFunction(state.movable.events.after, orig, dest, metadata, writeFen(state.pieces));
       return true;
     }
   } else if (canPremove(state, orig, dest)) {
@@ -286,7 +287,7 @@ export function playPremove(state: HeadlessState): boolean {
     if (result) {
       const metadata: cg.MoveMetadata = { premove: true };
       if (result !== true) metadata.captured = result;
-      callUserFunction(state.movable.events.after, orig, dest, metadata);
+      callUserFunction(state.movable.events.after, orig, dest, metadata, writeFen(state.pieces));
       success = true;
     }
   }
